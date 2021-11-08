@@ -1,7 +1,7 @@
 # websocket-api-gateway
 Websocket API Gateway that allows to subscribe on notifications about price changes of financial instruments
 
-To test connections with server, send such request:
+To test connection with server, send such request:
 
 /ping -method GET, it should return such JSON:
 
