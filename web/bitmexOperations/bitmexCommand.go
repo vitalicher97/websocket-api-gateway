@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/vitalicher97/websocket-api-gateway/external/bitmex"
-	"github.com/vitalicher97/websocket-api-gateway/service"
+	bitmex2 "github.com/vitalicher97/websocket-api-gateway/service/bitmex"
 )
 
 type Handler struct {
@@ -26,13 +26,13 @@ func NewHandler(w *bitmex.WebsocketClient) *Handler {
 }
 
 func (h *Handler) CommandExecution(c *gin.Context) {
-	command := new(service.Command)
+	command := new(bitmex2.Command)
 	newDecoder := json.NewDecoder(c.Request.Body)
 	newDecoder.DisallowUnknownFields()
 	err := newDecoder.Decode(command)
 	if err != nil {
 		log.Println(ErrInvalidRequest, ":", err)
-		errorResponse := service.ErrorResponse{
+		errorResponse := bitmex2.ErrorResponse{
 			Code:    http.StatusText(http.StatusBadRequest),
 			Message: err.Error(),
 		}
@@ -42,7 +42,7 @@ func (h *Handler) CommandExecution(c *gin.Context) {
 
 	log.Println(command) // Should be debug level log
 
-	err = service.CommandExecution(h.bitmexClient, command)
+	err = bitmex2.CommandExecution(h.bitmexClient, command)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "error",

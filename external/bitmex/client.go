@@ -40,9 +40,6 @@ type (
 
 	// ResponseMessage is for receiving messages from websocket server
 	ResponseMessage struct {
-		Subscribe string `json:"subscribe,omitempty"`
-		Success   bool   `json:"success,omitempty"`
-		Error     string `json:"error,omitempty"`
 		Data      []Data `json:"data,omitempty"`
 	}
 
