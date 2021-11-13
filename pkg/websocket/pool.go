@@ -18,10 +18,11 @@ type Pool struct {
 
 func NewPool() *Pool {
 	return &Pool{
-		Register:   make(chan *Client),
-		Unregister: make(chan *Client),
-		Clients:    make(map[*Client]bool),
-		Broadcast:  make(chan serviceBitmex.Command),
+		Register:        make(chan *Client),
+		Unregister:      make(chan *Client),
+		Clients:         make(map[*Client]bool),
+		Broadcast:       make(chan serviceBitmex.Command),
+		BitmexBroadcast: make(chan *bitmex.ResponseMessage),
 	}
 }
 
@@ -43,17 +44,15 @@ func (pool *Pool) Start() {
 		case message := <-pool.Broadcast:
 			fmt.Println("Sending message to all clients in Pool")
 			for client, _ := range pool.Clients {
-				if err := client.Conn.WriteJSON(message); err != nil {
-					fmt.Println(err)
-					return
-				}
+				log.Println(client, message)
 			}
 		case bitmexMessage := <-pool.BitmexBroadcast:
 			fmt.Println("Sending message to clients in Pool")
 			for client, _ := range pool.Clients {
 				for _, data := range bitmexMessage.Data {
-					if _, ok := client.Subscription[data.Symbol]; ok {
-						if err := client.Conn.WriteJSON(bitmexMessage); err != nil {
+					_, all := client.Subscription["ALL"]
+					if _, ok := client.Subscription[data.Symbol]; (ok || all) && len(data.LastPrice) != 0 {
+						if err := client.Conn.WriteJSON(data); err != nil {
 							fmt.Println(err)
 							return
 						}

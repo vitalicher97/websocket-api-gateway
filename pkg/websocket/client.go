@@ -43,15 +43,30 @@ func (c *Client) Read() {
 			log.Println("Invalid Message")
 		}
 
-		for _, symbol := range command.Symbols {
-			c.Subscription[symbol] = struct{}{}
-		}
-
 		fmt.Printf("Message Received: %+v\n", command)
-		err = bitmex2.CommandExecution(c.BitmexClient, command)
-		if err != nil {
-			continue
+
+		if command.Action == "subscribe" {
+			if len(command.Symbols) == 0 {
+				c.Subscription["ALL"] = struct{}{}
+			} else {
+				for _, symbol := range command.Symbols {
+					c.Subscription[symbol] = struct{}{}
+				}
+			}
+
+			_ = bitmex2.CommandExecution(c.BitmexClient, command)
 		}
 
+		if command.Action == "unsubscribe" {
+			if len(command.Symbols) == 0 {
+				for key := range c.Subscription {
+					delete(c.Subscription, key)
+				}
+			} else {
+				for _, symbol := range command.Symbols {
+					delete(c.Subscription, symbol)
+				}
+			}
+		}
 	}
 }
