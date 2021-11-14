@@ -11,9 +11,7 @@ func ListenBitmex(pool *Pool, w *bitmex.WebsocketClient) {
 			continue
 		}
 
-		//if _, ok := <-pool.BitmexBroadcast; ok {
 		pool.BitmexBroadcast <- response
-		//}
 	}
 
 }

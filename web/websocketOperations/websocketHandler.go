@@ -2,6 +2,7 @@ package websocketOperations
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/vitalicher97/websocket-api-gateway/external/bitmex"
@@ -12,7 +13,7 @@ func ServeWs(pool *websocket.Pool, bitmexClient *bitmex.WebsocketClient, w http.
 	fmt.Println("WebSocket Endpoint Hit")
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
-		fmt.Fprintf(w, "%+v\n", err)
+		log.Println(err)
 	}
 
 	client := &websocket.Client{

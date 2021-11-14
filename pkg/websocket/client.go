@@ -7,22 +7,17 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/vitalicher97/websocket-api-gateway/external/bitmex"
-	bitmex2 "github.com/vitalicher97/websocket-api-gateway/service/bitmex"
+	clientBitmex "github.com/vitalicher97/websocket-api-gateway/external/bitmex"
+	serviceBitmex "github.com/vitalicher97/websocket-api-gateway/service/bitmex"
 )
 
 type Client struct {
 	ID           string
 	Conn         *websocket.Conn
 	Pool         *Pool
-	BitmexClient *bitmex.WebsocketClient
+	BitmexClient *clientBitmex.WebsocketClient
 	Subscription map[string]struct{}
 }
-
-/*type Message struct {
-	Type int    `json:"type"`
-	Body string `json:"body"`
-}*/
 
 func (c *Client) Read() {
 	defer func() {
@@ -37,7 +32,7 @@ func (c *Client) Read() {
 			return
 		}
 
-		command := new(bitmex2.Command)
+		command := new(serviceBitmex.Command)
 		err = json.Unmarshal(p, command)
 		if err != nil {
 			log.Println("Invalid Message")
@@ -54,7 +49,7 @@ func (c *Client) Read() {
 				}
 			}
 
-			_ = bitmex2.CommandExecution(c.BitmexClient, command)
+			_ = serviceBitmex.CommandExecution(c.BitmexClient, command)
 		}
 
 		if command.Action == "unsubscribe" {
