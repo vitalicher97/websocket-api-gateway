@@ -1,6 +1,8 @@
-package service
+package bitmex
 
 import (
+	"log"
+
 	"github.com/vitalicher97/websocket-api-gateway/external/bitmex"
 )
 
@@ -41,6 +43,7 @@ func CommandExecution(w *bitmex.WebsocketClient, command *Command) error {
 
 	err := w.SendCommand(bitmexCommand)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
