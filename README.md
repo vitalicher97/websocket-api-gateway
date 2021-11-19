@@ -11,9 +11,11 @@ To test connection with server, send such request:
 
 }
 
-To subscribe on notifications from Bitmex, send such request:
+To connect to websocket for receiving notifications from Bitmex, send such request:
 
-/bitmex/command -method POST, request body should be JSON:
+/ws -method GET
+
+To subscribe on notifications from Bitmex, send such JSON message to websocket:
 
 {
 
@@ -23,9 +25,7 @@ To subscribe on notifications from Bitmex, send such request:
 
 }
 
-To unsubscribe from notifications from Bitmex, send such request:
-
-/bitmex/command -method POST, request body should be JSON:
+To unsubscribe from notifications from Bitmex, send such JSON message to websocket:
 
 {
 
@@ -33,6 +33,3 @@ To unsubscribe from notifications from Bitmex, send such request:
 
 }
 
-To connect to websocket for receiving notifications from Bitmex, send such request:
-
-/ws -method GET
